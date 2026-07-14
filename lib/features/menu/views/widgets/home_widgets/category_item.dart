@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/constants.dart';
+import '../../../../../core/constants/constants.dart';
 
 class CategoryItem extends StatelessWidget{
   final String _category;

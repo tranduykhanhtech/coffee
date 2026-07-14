@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/constants.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/widgets/auth_header.dart';
 import '../../../core/widgets/auth_input.dart';
 import '../../../core/widgets/primary_button.dart';

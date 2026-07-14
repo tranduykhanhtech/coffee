@@ -1,4 +1,4 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,6 +16,8 @@ class DetailDescription extends StatelessWidget {
           AppText.medium("Description"),
           SizedBox(height: 8.h), // cách đoạn văn 8
           RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
               style: TextStyle(
                 fontSize: 14.sp,
@@ -25,15 +27,17 @@ class DetailDescription extends StatelessWidget {
                 height: 1.5,
               ),
               children: [
-                TextSpan(text: description),
                 TextSpan(
-                  text: " Read More",
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold, // bold
-                  ),
+                    text: description
                 ),
               ],
+            ),
+          ),
+          Text(
+            " Read More",
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold, // bold
             ),
           ),
         ],

@@ -1,4 +1,4 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,13 +31,13 @@ class DetailInfo extends StatelessWidget {
               //mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AppText.medium(
+                  maxLines: 1, // chống chế tạm, do 1 số sản phẩm có chữ dài
                   name,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w600, // semibold
                 ),
                 SizedBox(height: 4.h), // cách chữ bên dưới 4
                 AppText.tiny(subName, color: AppColors.border),
-                //SizedBox(width: 16.w), // cách rating 16
                 Row(
                   children: [
                     AppIcon("assets/icons/rate_star.svg"),

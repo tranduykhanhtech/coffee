@@ -1,4 +1,7 @@
+import 'package:coffee/features/menu/controllers/coffee_menu_controller.dart';
+import 'package:coffee/features/menu/repository/coffee_menu_repository.dart';
 import 'package:coffee/features/menu/views/widgets/home_widgets/category_selector.dart';
+import 'package:get/get.dart';
 import 'package:coffee/features/menu/views/widgets/home_widgets/coffee_grid.dart';
 import 'package:coffee/features/menu/views/widgets/home_widgets/home_header.dart';
 import 'package:coffee/features/menu/views/widgets/home_widgets/promo_banner.dart';
@@ -14,6 +17,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Khởi tạo controller và truyền Repository thực tế để gọi dữ liệu từ Supabase
+  final CoffeeMenuController controller = Get.put(
+    CoffeeMenuController(repository: CoffeeMenuRepository()),
+  );
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(

@@ -4,7 +4,7 @@ import 'package:coffee/features/notifications/views/widgets/notification/notific
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../core/constants.dart';
+import '../../../core/constants/constants.dart';
 
 class NotificationScreen extends StatelessWidget{
   const NotificationScreen({super.key});

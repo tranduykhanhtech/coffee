@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../constants/constants.dart';
 
 class AuthInput extends StatelessWidget {
   final String label;
   final String hintText;
   final bool isPassword;
   final TextInputType inputType;
+  final TextEditingController? controller; // Thêm biến controller
 
   const AuthInput({
     super.key,
@@ -13,6 +14,7 @@ class AuthInput extends StatelessWidget {
     required this.hintText,
     this.isPassword = false,
     this.inputType = TextInputType.text,
+    this.controller, // Cho phép truyền controller vào
   });
 
   @override
@@ -20,11 +22,12 @@ class AuthInput extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(
+        Text(label, style: const TextStyle(
             color: AppColors.border
         )),
         const SizedBox(height: 8),
         TextField(
+          controller: controller, // Gán controller vào TextField
           obscureText: isPassword,
           keyboardType: inputType,
           decoration: InputDecoration(

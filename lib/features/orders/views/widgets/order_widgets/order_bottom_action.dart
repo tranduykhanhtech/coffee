@@ -1,11 +1,12 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/app_icon.dart';
 import 'package:coffee/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderBottomAction extends StatelessWidget {
-  const OrderBottomAction({super.key});
+  final double totalPrice; // Thêm biến nhận tổng tiền
+  const OrderBottomAction({super.key, required this.totalPrice});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class OrderBottomAction extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Khung phương thức thanh toán (h: 39)
-          Container(
+          SizedBox(
             //height: 39.h,
             child: Row(
               children: [
@@ -50,7 +51,7 @@ class OrderBottomAction extends StatelessWidget {
                       fontWeight: FontWeight.w600, // semiBold
                     ),
                     AppText.tiny(
-                      "\$ 5.53",
+                      "\$ $totalPrice", // Hiển thị tổng tiền thực tế
                       fontWeight: FontWeight.w600, // semiBold
                       color: AppColors.primary,
                     ),

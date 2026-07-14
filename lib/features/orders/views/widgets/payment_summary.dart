@@ -1,6 +1,8 @@
+import 'package:coffee/core/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/constants.dart';
+import 'package:get/get.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/widgets/primary_button.dart';
 
 class PaymentSummary extends StatelessWidget {
@@ -8,7 +10,9 @@ class PaymentSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final cartService = Get.find<CartService>();
+
+    return Obx(() => Container(
       padding: EdgeInsets.all(24.w),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -17,7 +21,6 @@ class PaymentSummary extends StatelessWidget {
           topRight: Radius.circular(24.r),
         ),
         boxShadow: [
-          // Hiệu ứng đổ bóng nhẹ để tách biệt phần tổng tiền với danh sách cuộn
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
@@ -28,17 +31,14 @@ class PaymentSummary extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Hiển thị giá tạm tính
-          _SummaryRow(label: "Price", value: "\$ 14.06"),
+          _SummaryRow(label: "Price", value: "\$ ${cartService.subtotal.toStringAsFixed(2)}"),
           SizedBox(height: 8.h),
-          // Hiển thị phí giao hàng (có giá cũ bị gạch ngang)
           _SummaryRow(
             label: "Delivery Fee",
-            value: "\$ 1.0",
-            originalValue: "\$ 2.0",
+            value: "\$ ${cartService.deliveryFee.toStringAsFixed(2)}",
+            originalValue: cartService.cartItems.isEmpty ? null : "\$ 2.0",
           ),
           SizedBox(height: 16.h),
-          // Đường kẻ đứt (Dotted Line) theo thiết kế Figma
           Row(
             children: List.generate(
               150 ~/ 2,
@@ -51,21 +51,19 @@ class PaymentSummary extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16.h),
-          // Tổng số tiền cuối cùng phải thanh toán
           _SummaryRow(
             label: "Total Payment",
-            value: "\$ 15.06",
+            value: "\$ ${cartService.totalPayment.toStringAsFixed(2)}",
             isTotal: true,
           ),
           SizedBox(height: 24.h),
-          // Nút bấm tiến hành thanh toán
           PrimaryButton(
             buttonContext: "Checkout",
             onPressed: () {},
           ),
         ],
       ),
-    );
+    ));
   }
 }
 

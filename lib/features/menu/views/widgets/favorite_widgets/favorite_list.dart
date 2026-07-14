@@ -1,28 +1,45 @@
+import 'package:coffee/core/services/favorite_service.dart';
+import 'package:coffee/features/menu/controllers/coffee_menu_controller.dart';
 import 'package:coffee/features/menu/views/widgets/favorite_widgets/favorite_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../../../../../core/constants/constants.dart';
 
 class FavoriteList extends StatelessWidget{
   const FavoriteList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // sau này có Db thì lấy data rồi chạy vòng lặp r đổ lên giao diện
-    return Wrap(
-      runSpacing: 14.h,
-      children: [
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-        FavoriteCard(title: "Caffe Mocha", subTitle: "Deep Foam", imageUrl: "assets/images/mocha.png"),
-      ],
-    );
-  }
+    final favoriteService = Get.find<FavoriteService>();
+    final menuController = Get.find<CoffeeMenuController>();
 
+    return Obx(() {
+      final favoriteIds = favoriteService.favoriteProductIds.toList();
+
+      if (favoriteIds.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: 100.h),
+            child: AppText.medium("Chưa có món yêu thích nào"),
+          ),
+        );
+      }
+
+      return Wrap(
+        runSpacing: 14.h,
+        children: favoriteIds.map((id) {
+          final product = menuController.getProductById(id);
+          if (product == null) return const SizedBox.shrink();
+
+          return FavoriteCard(
+            productId: product.id!,
+            title: product.productName ?? "",
+            subTitle: product.productSubname ?? "",
+            imageUrl: product.productImageUrl ?? "assets/images/mocha.png",
+          );
+        }).toList(),
+      );
+    });
+  }
 }

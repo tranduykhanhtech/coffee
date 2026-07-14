@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../core/constants.dart';
+import '../../../../../core/constants/constants.dart';
 import 'category_item.dart';
 
 class CategorySelector extends StatelessWidget{

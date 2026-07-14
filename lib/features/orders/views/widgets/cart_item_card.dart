@@ -1,9 +1,12 @@
+import 'package:coffee/core/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../core/constants.dart';
+import 'package:get/get.dart';
+import '../../../../core/constants/constants.dart';
 import '../../../../core/widgets/app_icon.dart';
 
 class CartItemCard extends StatelessWidget {
+  final String productSizeId;
   final String imageUrl;
   final String name;
   final String subName;
@@ -12,6 +15,7 @@ class CartItemCard extends StatelessWidget {
 
   const CartItemCard({
     super.key,
+    required this.productSizeId,
     required this.imageUrl,
     required this.name,
     required this.subName,
@@ -21,6 +25,8 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartService = Get.find<CartService>();
+
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
@@ -55,7 +61,7 @@ class CartItemCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 // Giá sản phẩm
-                AppText.medium("\$ $price", fontSize: 16.sp),
+                AppText.medium("\$ ${price.toStringAsFixed(2)}", fontSize: 16.sp),
               ],
             ),
           ),
@@ -65,17 +71,20 @@ class CartItemCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Icon thùng rác để xóa sản phẩm khỏi giỏ
-              AppIcon(
-                "assets/icons/trash.svg",
-                size: 20,
-                color: AppColors.border,
+              GestureDetector(
+                onTap: () => cartService.removeFromCart(productSizeId),
+                child: AppIcon(
+                  "assets/icons/trash.svg",
+                  size: 20,
+                  color: AppColors.border,
+                ),
               ),
               SizedBox(height: 6.h),
               // Nút bấm điều chỉnh số lượng (+/-)
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => cartService.updateQuantity(productSizeId, -1),
                     child: AppIcon("assets/icons/minus.svg", size: 32,),
                   ),
                   Padding(
@@ -83,7 +92,7 @@ class CartItemCard extends StatelessWidget {
                     child: AppText.medium(quantity.toString(), fontSize: 16.sp),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => cartService.updateQuantity(productSizeId, 1),
                     child: AppIcon("assets/icons/plus.svg", size: 32,),
                   ),
                 ],

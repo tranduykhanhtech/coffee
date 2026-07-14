@@ -1,9 +1,12 @@
+import 'package:coffee/core/routes/app_pages.dart';
+import 'package:coffee/features/profile/views/profile_screen.dart'; // Thêm import này
+import 'package:get/get.dart';
 import 'package:coffee/features/menu/views/favorite_screen.dart';
 import 'package:coffee/features/menu/views/home_screen.dart';
 import 'package:coffee/features/notifications/views/notification_screen.dart';
-import 'package:coffee/features/orders/views/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../core/constants/constants.dart'; // Import AppColors
 import '../../../core/widgets/app_icon.dart';
 
 class Dashboard extends StatefulWidget {
@@ -19,26 +22,16 @@ class _DashboardState extends State<Dashboard> {
   final List<Widget> _page = [
     const HomeScreen(),
     const FavoriteScreen(),
-    const NotificationScreen(), // Đổi CartScreen thành một màn hình khác hoặc để trống
+    const NotificationScreen(),
+    const ProfileScreen(), // Đã có import nên không còn lỗi
   ];
 
   void _changeScreen(int index) {
     if (index == 2) {
-      // Nếu bấm vào giỏ hàng (Cart), điều hướng Navigator.push để ẩn BottomBar
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const CartScreen()),
-      );
-      return; // Không đổi selectedIndex của BottomBar
+      Get.toNamed(Routes.CART);
+      return;
     }
     
-    // Xử lý index cho các màn hình còn lại (Home, Favorite, Notification)
-    // Vì ta đã lấy index 2 làm CartScreen (push riêng), 
-    // nên cần điều chỉnh index để khớp với danh sách _page
-    int actualIndex = index;
-    if (index > 2) {
-      actualIndex = 2; // Index 3 (Notification) trỏ về phần tử thứ 2 của _page
-    }
     setState(() {
       _selectedIndex = index;
     });
@@ -46,9 +39,13 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    // Logic index cho IndexedStack: index 2 của BottomBar là Cart (không nằm trong stack)
+    int stackIndex = _selectedIndex;
+    if (_selectedIndex > 2) stackIndex = _selectedIndex - 1;
+
     return Scaffold(
       body: IndexedStack(
-        index: _selectedIndex > 2 ? 2 : _selectedIndex, 
+        index: stackIndex, 
         children: _page
       ),
       bottomNavigationBar: Container(
@@ -61,34 +58,37 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         child: BottomNavigationBar(
-          backgroundColor: Colors.transparent, // Đặt trong suốt để hiển thị màu của Container
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          type: BottomNavigationBarType.fixed, // không cho icon nhảy lung tung
-          showSelectedLabels: false, // Tắt hẳn chỗ dành cho chữ của nút Active
-          showUnselectedLabels: false, // Tắt hẳn chỗ dành cho chữ của nút Inactive
-          //////////////////////////////////////////////////////////////////////////
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           currentIndex: _selectedIndex,
           onTap: _changeScreen,
-          selectedItemColor: Colors.red,
-          unselectedItemColor: Colors.blue,
           items: [
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/home.svg",),
+              icon: AppIcon("assets/icons/home.svg"),
               activeIcon: AppIcon("assets/icons/home_active.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/favorite.svg",),
-              activeIcon: AppIcon("assets/icons/favorite_active.svg",),
+              icon: AppIcon("assets/icons/favorite.svg"),
+              activeIcon: AppIcon("assets/icons/favorite_active.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/cart.svg",),
+              icon: AppIcon("assets/icons/cart.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/notification.svg",),
-              activeIcon: AppIcon("assets/icons/notification_active.svg",),
+              icon: AppIcon("assets/icons/notification.svg"),
+              activeIcon: AppIcon("assets/icons/notification_active.svg"),
+              label: "",
+            ),
+            // Sửa lỗi const ở đây
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person_outline, color: AppColors.border),
+              activeIcon: const Icon(Icons.person, color: AppColors.primary),
               label: "",
             ),
           ],

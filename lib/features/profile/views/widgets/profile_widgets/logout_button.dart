@@ -1,4 +1,6 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/services/auth_service.dart';
+import 'package:get/get.dart';
+import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,9 +12,12 @@ class LogoutButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 56.h, // kích thước như nút primary
+      height: 56.h,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          // Gọi hàm signOut từ AuthService
+          Get.find<AuthService>().signOut();
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           elevation: 0,

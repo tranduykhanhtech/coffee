@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../constants.dart';
+import '../constants/constants.dart';
 
 
 class AuthHeader extends StatelessWidget{
@@ -26,7 +26,12 @@ class AuthHeader extends StatelessWidget{
             children: [
               AppText.big(title),
               SizedBox(height: 8.h),
-              AppText.small(subtitle),
+              Flexible(
+                  child: AppText.small(
+                      subtitle
+                  ),
+              )
+
             ],
           ),
         ),

@@ -1,22 +1,22 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OrderPaymentSummary extends StatelessWidget {
-  const OrderPaymentSummary({super.key});
+  final double price; // Nhận giá từ màn hình cha
+  const OrderPaymentSummary({super.key, required this.price});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      //height: 93.h, // h: 93
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           AppText.medium("Payment Summary"),
-          SizedBox(height: 16.h), // cách dưới 16
-          _SummaryRow(label: "Price", value: "\$ 4.53"),
+          SizedBox(height: 16.h),
+          _SummaryRow(label: "Price", value: "\$ $price"),
           SizedBox(height: 8.h),
-          _SummaryRow(
+          const _SummaryRow(
             label: "Delivery Fee",
             value: "\$ 1.0",
             originalValue: "\$ 2.0",

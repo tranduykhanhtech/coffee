@@ -1,22 +1,26 @@
-import 'package:coffee/core/constants.dart';
+import 'package:coffee/core/utils.dart'; // Thêm import utils để format giá
+import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DetailBottomBar extends StatelessWidget {
   final double price;
-  const DetailBottomBar({super.key, required this.price});
+  final VoidCallback? onBuyNow; // Thêm callback xử lý khi nhấn nút Buy Now
+  final VoidCallback? onAddToCart; // Thêm callback cho giỏ hàng
+
+  const DetailBottomBar({
+    super.key,
+    required this.price,
+    this.onBuyNow,
+    this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 118.h, // h: 118
-      padding: EdgeInsets.only(
-        top: 16.h,
-        bottom: 24.h, // điều chỉnh lại cho phù hợp thiết bị (bạn yêu cầu bottom 46 nhưng có thể quá lớn tùy màn hình)
-        left: 24.w,
-        right: 24.w,
-      ),
+      height: 120.h,
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -32,7 +36,6 @@ class DetailBottomBar extends StatelessWidget {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Phần hiển thị giá
           Column(
@@ -42,21 +45,36 @@ class DetailBottomBar extends StatelessWidget {
               AppText.small("Price", color: AppColors.border),
               SizedBox(height: 4.h),
               AppText.medium(
-                "\$ $price",
-                fontSize: 18.sp, // cỡ 18
-                fontWeight: FontWeight.w600, // semibold
-                color: AppColors.primary, // màu primary
+                "\$ ${AppUtils.formatPrice(price)}",
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primary,
               ),
             ],
           ),
           
-          SizedBox(width: 34.w), // cách nhau 34
+          SizedBox(width: 24.w),
+          
+          // Nút Add to Cart (Icon)
+          GestureDetector(
+            onTap: onAddToCart,
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: const Icon(Icons.add_shopping_cart, color: AppColors.primary),
+            ),
+          ),
+
+          SizedBox(width: 12.w),
           
           // Nút Buy Now
           Expanded(
             child: PrimaryButton(
               buttonContext: "Buy Now",
-              onPressed: () {},
+              onPressed: onBuyNow,
             ),
           ),
         ],

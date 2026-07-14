@@ -1,6 +1,8 @@
+import 'package:coffee/core/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants.dart';
+import 'package:get/get.dart';
+import '../../../core/constants/constants.dart';
 import '../../../core/widgets/app_bar.dart';
 import 'widgets/address_section.dart';
 import 'widgets/cart_item_card.dart';
@@ -11,8 +13,9 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartService = Get.find<CartService>();
+
     return Scaffold(
-      // Đã xóa phần AppBar mặc định của Scaffold vì bạn đã dùng AppBarCoffee bên trong body
       body: SafeArea(
         child: Stack(
           children: [
@@ -20,62 +23,51 @@ class CartScreen extends StatelessWidget {
               padding: AppSizes.screenPadding,
               child: Column(
                 children: [
-                  // Sử dụng AppBarCoffee ở đây như một Widget bình thường trong Column
                   const AppBarCoffee(title: "My Cart"),
                   Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 24.h),
-                          // Address Section Card
-                          const AddressSection(),
-                          SizedBox(height: 17.h),
+                    child: Obx(() {
+                      if (cartService.cartItems.isEmpty) {
+                        return Center(
+                          child: AppText.medium("Giỏ hàng của bạn đang trống"),
+                        );
+                      }
+                      return SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 24.h),
+                            const AddressSection(),
+                            SizedBox(height: 17.h),
+                            
+                            // Render real cart items
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: cartService.cartItems.length,
+                              separatorBuilder: (context, index) => SizedBox(height: 17.h),
+                              itemBuilder: (context, index) {
+                                final item = cartService.cartItems[index];
+                                return CartItemCard(
+                                  productSizeId: item.productSizeId,
+                                  imageUrl: item.imageUrl ?? "assets/images/mocha.png",
+                                  name: item.productName ?? "Unknown",
+                                  subName: item.productSubname ?? "",
+                                  price: item.price ?? 0.0,
+                                  quantity: item.quantity,
+                                );
+                              },
+                            ),
 
-                          // Cart Items List
-                          const CartItemCard(
-                            imageUrl: "assets/images/mocha.png", // Verify path
-                            name: "Flat White",
-                            subName: "Espresso · L",
-                            price: 3.53,
-                            quantity: 1,
-                          ),
-                          SizedBox(height: 17.h,),
-                          const CartItemCard(
-                            imageUrl: "assets/images/mocha.png",
-                            name: "Caffe Mocha",
-                            subName: "Deep Foam · M",
-                            price: 3.53,
-                            quantity: 1,
-                          ),
-                          SizedBox(height: 17.h,),
-                          const CartItemCard(
-                            imageUrl: "assets/images/mocha.png",
-                            name: "Caffe Mocha",
-                            subName: "Espresso · L",
-                            price: 3.53,
-                            quantity: 1,
-                          ),
-                          SizedBox(height: 17.h,),
-                          const CartItemCard(
-                            imageUrl: "assets/images/mocha.png",
-                            name: "Caffe Mocha",
-                            subName: "Espresso · L",
-                            price: 3.53,
-                            quantity: 1,
-                          ),
-                          
-                          // Space for bottom summary
-                          SizedBox(height: 200.h),
-                        ],
-                      ),
-                    ),
+                            SizedBox(height: 200.h),
+                          ],
+                        ),
+                      );
+                    }),
                   ),
                 ],
               ),
             ),
-            // Bottom Payment Summary
             const Positioned(
               bottom: 0,
               left: 0,
@@ -84,7 +76,6 @@ class CartScreen extends StatelessWidget {
             ),
           ],
         ),
-        // tách tới đây
       ),
     );
   }
