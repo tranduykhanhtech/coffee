@@ -26,6 +26,8 @@ class CategoryItem extends StatelessWidget{
         _category,
         color: _isSelected ? Colors.white : Colors.black,
         fontWeight: FontWeight.bold,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

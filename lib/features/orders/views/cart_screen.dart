@@ -23,7 +23,10 @@ class CartScreen extends StatelessWidget {
               padding: AppSizes.screenPadding,
               child: Column(
                 children: [
-                  const AppBarCoffee(title: "My Cart"),
+                  const AppBarCoffee(
+                    title: "My Cart",
+                    showBackButton: true, // Hiện nút back ở màn Cart để quay lại Home
+                  ),
                   Expanded(
                     child: Obx(() {
                       if (cartService.cartItems.isEmpty) {
@@ -50,7 +53,7 @@ class CartScreen extends StatelessWidget {
                                 final item = cartService.cartItems[index];
                                 return CartItemCard(
                                   productSizeId: item.productSizeId,
-                                  imageUrl: item.imageUrl ?? "assets/images/mocha.png",
+                                  imageUrl: item.fullImageUrl,
                                   name: item.productName ?? "Unknown",
                                   subName: item.productSubname ?? "",
                                   price: item.price ?? 0.0,

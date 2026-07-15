@@ -57,10 +57,14 @@ class FavoriteService extends GetxService {
 
       if (favoriteProductIds.contains(productId)) {
         favoriteProductIds.remove(productId);
+        // Xóa đồng thời ở DB và cập nhật Local
         await _repository.removeFavorite(user.id, productId);
+        _saveToLocal();
       } else {
         favoriteProductIds.add(productId);
+        // Thêm đồng thời ở DB và cập nhật Local
         await _repository.addFavorite(user.id, productId);
+        _saveToLocal();
       }
     });
   }

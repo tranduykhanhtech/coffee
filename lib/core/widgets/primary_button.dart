@@ -5,11 +5,13 @@ import '../constants/constants.dart';
 class PrimaryButton extends StatelessWidget{
   final String buttonContext;
   final VoidCallback? onPressed;
+  final bool isLoading;
 
   const PrimaryButton({
     super.key,
     required this.buttonContext,
     this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -18,7 +20,7 @@ class PrimaryButton extends StatelessWidget{
       width: double.infinity,
       height: 56.h,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           shape: RoundedRectangleBorder(
@@ -26,14 +28,24 @@ class PrimaryButton extends StatelessWidget{
           ),
           elevation: 0,
         ),
-        child: AppText.medium(
-          buttonContext,
-          color: Colors.white,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w600,
-        ),
+        child: isLoading
+            ? const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              )
+            : AppText.medium(
+                buttonContext,
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
       ),
     );
   }
-
 }

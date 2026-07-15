@@ -1,15 +1,20 @@
+import 'package:coffee/core/widgets/custom_image.dart';
 import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/app_icon.dart';
+import 'package:coffee/features/orders/controllers/order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
-class OrderItemCard extends StatelessWidget {
+class OrderItemCard extends GetView<OrderController> {
+  final int index;
   final String name;
   final String subName;
   final String imageUrl;
 
   const OrderItemCard({
     super.key,
+    required this.index,
     required this.name,
     required this.subName,
     required this.imageUrl,
@@ -18,44 +23,47 @@ class OrderItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 54.h, // h: 54
+      height: 54.h,
       child: Row(
         children: [
           // Ảnh sp nhỏ 54x54
-          Container(
+          CustomImage(
             width: 54.w,
             height: 54.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.r),
-              image: DecorationImage(
-                image: AssetImage(imageUrl),
-                fit: BoxFit.cover,
-              ),
-            ),
+            imageUrl: imageUrl,
+            borderRadius: BorderRadius.circular(12.r),
           ),
-          SizedBox(width: 16.w), // cách ảnh 16
+          SizedBox(width: 16.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AppText.medium(name),
-                SizedBox(height: 4.h), // cách ở trên 4
+                SizedBox(height: 4.h),
                 AppText.tiny(subName, color: AppColors.border),
               ],
             ),
           ),
-          // Bộ nút thêm bớt (90x24)
+          // Bộ nút tăng giảm số lượng (Reactive theo index)
           SizedBox(
             width: 90.w,
             height: 24.h,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                //const _QtyIcon(icon: Icons.remove),
-                AppIcon("assets/icons/minus.svg"),
-                AppText.medium("1", fontSize: 14.sp), // số 1 ở giữa
-                AppIcon("assets/icons/plus_white.svg"),
+                GestureDetector(
+                  onTap: () => controller.decrementQuantity(index),
+                  child: const AppIcon("assets/icons/minus.svg"),
+                ),
+                Obx(() => AppText.medium(
+                  controller.orderItems[index].quantity.toString(), 
+                  fontSize: 14.sp
+                )),
+                GestureDetector(
+                  onTap: () => controller.incrementQuantity(index),
+                  child: const AppIcon("assets/icons/plus_white.svg"),
+                ),
               ],
             ),
           ),
@@ -64,4 +72,3 @@ class OrderItemCard extends StatelessWidget {
     );
   }
 }
-

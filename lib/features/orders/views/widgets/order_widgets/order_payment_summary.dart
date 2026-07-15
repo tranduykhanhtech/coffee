@@ -1,29 +1,45 @@
 import 'package:coffee/core/constants/constants.dart';
+import 'package:coffee/features/orders/controllers/order_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
-class OrderPaymentSummary extends StatelessWidget {
-  final double price; // Nhận giá từ màn hình cha
-  const OrderPaymentSummary({super.key, required this.price});
+class OrderPaymentSummary extends GetView<OrderController> {
+  const OrderPaymentSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppText.medium("Payment Summary"),
-          SizedBox(height: 16.h),
-          _SummaryRow(label: "Price", value: "\$ $price"),
-          SizedBox(height: 8.h),
-          const _SummaryRow(
-            label: "Delivery Fee",
-            value: "\$ 1.0",
-            originalValue: "\$ 2.0",
-          ),
-        ],
-      ),
-    );
+    return Obx(() {
+      final double subtotal = controller.subtotal;
+      final double deliveryFee = controller.deliveryFee;
+      final double totalPayment = controller.totalPayment;
+
+      return SizedBox(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText.medium("Payment Summary"),
+            SizedBox(height: 16.h),
+            _SummaryRow(label: "Price", value: "\$ ${subtotal.toStringAsFixed(1)}"),
+            SizedBox(height: 8.h),
+            _SummaryRow(
+              label: "Delivery Fee",
+              value: "\$ ${deliveryFee.toStringAsFixed(1)}",
+              // Chỉ hiện giá cũ nếu là Deliver và có phí
+              originalValue: deliveryFee > 0 ? "\$ 2.0" : null,
+            ),
+            SizedBox(height: 8.h),
+            const Divider(),
+            SizedBox(height: 8.h),
+            _SummaryRow(
+              label: "Total Payment", 
+              value: "\$ ${totalPayment.toStringAsFixed(1)}",
+              isTotal: true,
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -31,11 +47,13 @@ class _SummaryRow extends StatelessWidget {
   final String label;
   final String value;
   final String? originalValue;
+  final bool isTotal;
 
   const _SummaryRow({
     required this.label,
     required this.value,
     this.originalValue,
+    this.isTotal = false,
   });
 
   @override
@@ -43,7 +61,11 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        AppText.small(label, color: AppColors.textMain),
+        AppText.small(
+          label, 
+          color: AppColors.textMain,
+          fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
+        ),
         Row(
           children: [
             if (originalValue != null) ...[
@@ -60,7 +82,8 @@ class _SummaryRow extends StatelessWidget {
             AppText.medium(
               value,
               fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.w600,
+              color: isTotal ? AppColors.primary : AppColors.textMain,
             ),
           ],
         ),

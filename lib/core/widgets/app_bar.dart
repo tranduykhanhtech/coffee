@@ -6,11 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppBarCoffee extends StatelessWidget {
   final String title;
   final Widget? icon; // Dùng Widget để linh hoạt (có thể là AppIcon hoặc AppText như "Read all")
+  final bool showBackButton; // Flag để ẩn/hiện nút back
 
   const AppBarCoffee({
     super.key,
     required this.title,
     this.icon,
+    this.showBackButton = false, // Mặc định là ẨN (dành cho các tab chính)
   });
 
   @override
@@ -25,10 +27,16 @@ class AppBarCoffee extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Nút quay lại: Khi bấm vào sẽ quay về trang trước đó trong stack điều hướng
-              GestureDetector(
-                onTap: () => Navigator.maybePop(context),
-                child: const AppIcon("assets/icons/back.svg"),
+              // Nút quay lại: Chỉ hiện khi showBackButton = true
+              SizedBox(
+                width: 44.w,
+                height: 44.h,
+                child: showBackButton 
+                  ? GestureDetector(
+                      onTap: () => Navigator.maybePop(context),
+                      child: const Center(child: AppIcon("assets/icons/back.svg")),
+                    )
+                  : const SizedBox.shrink(),
               ),
 
               // Tiêu đề của màn hình

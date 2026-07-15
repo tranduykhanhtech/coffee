@@ -4,42 +4,80 @@ import 'package:get/get.dart';
 import '../models/product_model.dart';
 
 class CoffeeMenuController extends GetxController{
-  // cục này là DI
-  // trông không khác gì DI bên JAVA hay .NET (C#)
   final CoffeeMenuRepository repository;
-  CoffeeMenuController({required this.repository}); // constructor
-  ///////////////////////////////////////////
+  CoffeeMenuController({required this.repository});
 
-  // --- QUẢN LÝ TRẠNG THÁI (STATE) ---
-  // Thêm .obs để GetX theo dõi. Khi biến này đổi, UI sẽ tự vẽ lại.
   var isLoading = false.obs;
   var productList = <ProductModel>[].obs;
+  
+  // Search and Filter logic
+  var searchQuery = "".obs;
+  var selectedCategory = "All Coffee".obs;
+  var categoryList = <String>["All Coffee"].obs;
 
   @override
   void onInit() {
     super.onInit();
-
-    // vừa vào màn hình phát là load dữ liệu ngay
     getAllproducts();
   }
 
-  // lấy tất cả products
+  // Lọc sản phẩm dựa trên search và category
+  List<ProductModel> get filteredProductList {
+    return productList.where((product) {
+      final name = (product.productName ?? "").toLowerCase().trim();
+      final search = searchQuery.value.trim().toLowerCase();
+      final matchesSearch = search.isEmpty || name.contains(search);
+      
+      final category = (product.categoryName ?? "").trim().toLowerCase();
+      final selected = selectedCategory.value.trim().toLowerCase();
+      
+      // So sánh không phân biệt hoa thường và trim khoảng trắng
+      final matchesCategory = selected == "all coffee" || category == selected;
+
+      return matchesSearch && matchesCategory;
+    }).toList();
+  }
+
   Future<void> getAllproducts() async {
     try {
-      isLoading.value = true; // bật cái loading quay mòng mòng
-
+      isLoading.value = true;
       final data = await repository.getAllProducts();
-      productList.assignAll(data); // đưa data vào biến state
+      
+      productList.assignAll(data);
+      updateCategories(data);
     }
     catch (e) {
-      Get.snackbar('no product found', e.toString()); // popup hiển thị lỗi nếu có lỗi xảy ra
+      print("--- ERROR IN CONTROLLER: $e");
+      Get.snackbar('Error', 'Failed to load products: ${e.toString()}');
     }
     finally {
-      isLoading.value = false; // tắt cái xoay mòng mòng
+      isLoading.value = false;
     }
   }
 
-  // Tìm product theo ID (để hiển thị danh sách yêu thích)
+  void updateCategories(List<ProductModel> products) {
+    // Trích xuất danh sách category duy nhất từ sản phẩm
+    final categories = products
+        .map((p) => p.categoryName?.trim())
+        .where((name) => name != null && name!.isNotEmpty)
+        .cast<String>()
+        .toSet()
+        .toList();
+    
+    // Sắp xếp alphabet cho đẹp
+    categories.sort((a, b) => a.compareTo(b));
+    
+    categoryList.assignAll(["All Coffee", ...categories]);
+  }
+
+  void setSearchQuery(String query) {
+    searchQuery.value = query;
+  }
+
+  void setCategory(String category) {
+    selectedCategory.value = category;
+  }
+
   ProductModel? getProductById(String id) {
     try {
       return productList.firstWhere((p) => p.id == id);

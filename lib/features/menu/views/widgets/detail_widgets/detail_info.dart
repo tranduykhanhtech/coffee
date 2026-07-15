@@ -38,18 +38,18 @@ class DetailInfo extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h), // cách chữ bên dưới 4
                 AppText.tiny(subName, color: AppColors.border),
-                Row(
-                  children: [
-                    AppIcon("assets/icons/rate_star.svg"),
-                    SizedBox(width: 4.w),
-                    AppText.medium(
-                      rating.toString(),
-                      fontSize: 16.sp,
-                    ),
-                    SizedBox(width: 4.w),
-                    AppText.small("($reviewCount)", color: AppColors.border),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     AppIcon("assets/icons/rate_star.svg"),
+                //     SizedBox(width: 4.w),
+                //     AppText.medium(
+                //       rating.toString(),
+                //       fontSize: 16.sp,
+                //     ),
+                //     SizedBox(width: 4.w),
+                //     AppText.small("($reviewCount)", color: AppColors.border),
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -59,9 +59,9 @@ class DetailInfo extends StatelessWidget {
             children: [
               _IconBox(iconPath: "assets/icons/noti_delivery.svg"), // icon tự thêm
               SizedBox(width: 7.w), // cách nhau
-              _IconBox(iconPath: "assets/icons/noti_cart.svg"),
+              _IconBox(iconPath: "assets/icons/cfbean.svg"),
               SizedBox(width: 7.w),
-              _IconBox(iconPath: "assets/icons/favorite_active.svg"),
+              _IconBox(iconPath: "assets/icons/milk.svg"),
             ],
           ),
         ],

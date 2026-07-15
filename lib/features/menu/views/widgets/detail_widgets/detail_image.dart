@@ -1,3 +1,4 @@
+import 'package:coffee/core/widgets/custom_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -7,16 +8,11 @@ class DetailImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return CustomImage(
       width: double.infinity,
-      height: 202.h, // Chiều cao theo yêu cầu
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        image: DecorationImage(
-          image: AssetImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
+      height: 202.h,
+      imageUrl: imageUrl,
+      borderRadius: BorderRadius.circular(16.r),
     );
   }
 }

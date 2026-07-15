@@ -33,10 +33,7 @@ class FavoriteList extends StatelessWidget{
           if (product == null) return const SizedBox.shrink();
 
           return FavoriteCard(
-            productId: product.id!,
-            title: product.productName ?? "",
-            subTitle: product.productSubname ?? "",
-            imageUrl: product.productImageUrl ?? "assets/images/mocha.png",
+            product: product,
           );
         }).toList(),
       );

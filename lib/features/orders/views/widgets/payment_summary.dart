@@ -1,3 +1,4 @@
+import 'package:coffee/core/routes/app_pages.dart';
 import 'package:coffee/core/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,7 +23,7 @@ class PaymentSummary extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(12), // 0.05 * 255 ≈ 12
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -44,7 +45,7 @@ class PaymentSummary extends StatelessWidget {
               150 ~/ 2,
               (index) => Expanded(
                 child: Container(
-                  color: index % 2 == 0 ? Colors.transparent : AppColors.border.withOpacity(0.3),
+                  color: index % 2 == 0 ? Colors.transparent : AppColors.border.withAlpha(76), // 0.3 * 255 ≈ 76
                   height: 1,
                 ),
               ),
@@ -59,7 +60,19 @@ class PaymentSummary extends StatelessWidget {
           SizedBox(height: 24.h),
           PrimaryButton(
             buttonContext: "Checkout",
-            onPressed: () {},
+            onPressed: () {
+              if (cartService.cartItems.isEmpty) {
+                Get.snackbar("Thông báo", "Giỏ hàng của bạn đang trống");
+                return;
+              }
+              // Chuyển sang trang Order kèm danh sách món
+              Get.toNamed(
+                Routes.ORDER,
+                arguments: {
+                  "items": cartService.cartItems.toList(),
+                },
+              );
+            },
           ),
         ],
       ),

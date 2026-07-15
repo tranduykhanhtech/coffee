@@ -1,3 +1,4 @@
+import 'package:coffee/core/widgets/custom_image.dart';
 import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -28,19 +29,24 @@ class _OnboardingScreenState extends State<OnboardingScreen>{
         extendBodyBehindAppBar: true,
         body: Column(
           children: [
-            Container(
+            SizedBox(
               width: 375.h,
               height: 536.h,
-              alignment: Alignment.bottomCenter,
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/onboarding.png'),
-                      fit: BoxFit.cover
-                  )
-              ),
-              child: AppText.big(
-                "Fall in Love with",
-                color: Colors.white,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomImage(
+                      imageUrl: 'assets/images/onboarding.png', // Sẽ fallback nếu mất file
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: AppText.big(
+                      "Fall in Love with",
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
             Container(

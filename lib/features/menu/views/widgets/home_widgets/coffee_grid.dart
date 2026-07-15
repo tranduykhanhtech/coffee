@@ -10,7 +10,6 @@ class CoffeeGrid extends GetView<CoffeeMenuController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Hiển thị vòng xoay khi đang tải dữ liệu
       if (controller.isLoading.value) {
         return const Center(
           child: Padding(
@@ -20,8 +19,9 @@ class CoffeeGrid extends GetView<CoffeeMenuController> {
         );
       }
 
-      // Thông báo nếu danh sách trống
-      if (controller.productList.isEmpty) {
+      final filteredList = controller.filteredProductList;
+
+      if (filteredList.isEmpty) {
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(20.0),
@@ -30,12 +30,11 @@ class CoffeeGrid extends GetView<CoffeeMenuController> {
         );
       }
 
-      // Sử dụng ListView.builder thay cho Wrap theo yêu cầu
       return ListView.builder(
-        shrinkWrap: true, // Quan trọng: Cho phép ListView nằm trong SingleChildScrollView
-        physics: const NeverScrollableScrollPhysics(), // Để trang Home quản lý việc cuộn
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        itemCount: (controller.productList.length / 2).ceil(), // Chia đôi danh sách để làm grid thủ công
+        itemCount: (filteredList.length / 2).ceil(),
         itemBuilder: (context, index) {
           int firstIndex = index * 2;
           int secondIndex = firstIndex + 1;
@@ -45,14 +44,12 @@ class CoffeeGrid extends GetView<CoffeeMenuController> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Thẻ sản phẩm thứ nhất
-                CoffeeCart(product: controller.productList[firstIndex]),
+                CoffeeCart(product: filteredList[firstIndex]),
                 
-                // Thẻ sản phẩm thứ hai (nếu có)
-                if (secondIndex < controller.productList.length)
-                  CoffeeCart(product: controller.productList[secondIndex])
+                if (secondIndex < filteredList.length)
+                  CoffeeCart(product: filteredList[secondIndex])
                 else
-                  SizedBox(width: 156.w), // Giữ chỗ nếu hàng chỉ có 1 phần tử
+                  SizedBox(width: 156.w),
               ],
             ),
           );

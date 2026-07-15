@@ -1,4 +1,8 @@
+import '../../../core/constants/constants.dart';
+import '../../../core/supabase_client.dart';
+
 class CartItemModel {
+  final String? productId; // Thêm productId để tạo order detail
   final String productSizeId;
   final int quantity;
   final String? productName;
@@ -7,6 +11,7 @@ class CartItemModel {
   final double? price;
 
   CartItemModel({
+    this.productId,
     required this.productSizeId,
     required this.quantity,
     this.productName,
@@ -17,6 +22,7 @@ class CartItemModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'product_id': productId,
       'product_size_id': productSizeId,
       'quantity': quantity,
       'product_name': productName,
@@ -28,6 +34,7 @@ class CartItemModel {
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
     return CartItemModel(
+      productId: json['product_id'],
       productSizeId: json['product_size_id'],
       quantity: json['quantity'],
       productName: json['product_name'],
@@ -38,6 +45,7 @@ class CartItemModel {
   }
 
   CartItemModel copyWith({
+    String? productId,
     String? productSizeId,
     int? quantity,
     String? productName,
@@ -46,6 +54,7 @@ class CartItemModel {
     double? price,
   }) {
     return CartItemModel(
+      productId: productId ?? this.productId,
       productSizeId: productSizeId ?? this.productSizeId,
       quantity: quantity ?? this.quantity,
       productName: productName ?? this.productName,
@@ -53,5 +62,11 @@ class CartItemModel {
       imageUrl: imageUrl ?? this.imageUrl,
       price: price ?? this.price,
     );
+  }
+
+  // Getter lấy URL đầy đủ từ Supabase
+  String get fullImageUrl {
+    if (imageUrl == null || imageUrl!.isEmpty) return "";
+    return SupabaseConfig.getPublicUrl(AppConstants.bucketProducts, imageUrl!);
   }
 }

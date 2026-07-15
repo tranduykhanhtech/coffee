@@ -1,6 +1,5 @@
-import 'package:get/get.dart'; // Thêm import GetX
-import 'package:coffee/features/menu/models/product_model.dart';
-import 'package:coffee/features/menu/models/product_size_model.dart';
+import 'package:coffee/features/orders/controllers/order_controller.dart';
+import 'package:get/get.dart';
 import 'package:coffee/core/constants/constants.dart';
 import 'package:coffee/core/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +16,9 @@ class OrderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Lấy dữ liệu được truyền từ ItemDetailScreen
-    final Map<String, dynamic> args = Get.arguments ?? {};
-    final ProductModel? product = args["product"];
-    final ProductSizeModel? selectedSize = args["selectedSize"];
-    final double totalPrice = args["totalPrice"] ?? 0.0;
+    // Khởi tạo OrderController
+    // Tag dùng để phân biệt các instance nếu cần, nhưng ở đây dùng Get.put là đủ
+    final controller = Get.put(OrderController());
 
     return Scaffold(
       body: SafeArea(
@@ -31,10 +28,11 @@ class OrderScreen extends StatelessWidget {
               padding: AppSizes.screenPadding,
               child: Column(
                 children: [
-                  // Tiêu đề trang Order
-                  const AppBarCoffee(title: "Order"),
+                  const AppBarCoffee(
+                    title: "Order",
+                    showBackButton: true, // Màn thanh toán cần nút back
+                  ),
                   
-                  // Nội dung có thể cuộn
                   Expanded(
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
@@ -42,28 +40,32 @@ class OrderScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 24.h),
-                          
-                          // Thanh chuyển địa điểm giao nhận (h: 43)
                           const DeliveryToggle(),
-                          
                           SizedBox(height: 24.h),
-                          
-                          // Khung địa chỉ (h: 121)
                           const OrderAddressSection(),
                           
                           SizedBox(height: 16.h),
-                          Divider(color: AppColors.border.withOpacity(0.2)),
+                          Divider(color: AppColors.border.withAlpha(51)),
                           SizedBox(height: 16.h),
                           
-                          // Card sản phẩm (Đã cập nhật dữ liệu động)
-                          OrderItemCard(
-                            name: product?.productName ?? "No name",
-                            subName: selectedSize?.sizeType ?? "",
-                            imageUrl: product?.productImageUrl ?? "assets/images/mocha.png",
-                          ),
+                          // Danh sách sản phẩm trong đơn hàng
+                          Obx(() => ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: controller.orderItems.length,
+                            separatorBuilder: (context, index) => SizedBox(height: 16.h),
+                            itemBuilder: (context, index) {
+                              final item = controller.orderItems[index];
+                              return OrderItemCard(
+                                index: index,
+                                name: item.productName ?? "No name",
+                                subName: item.productSubname ?? "",
+                                imageUrl: item.fullImageUrl,
+                              );
+                            },
+                          )),
                           
                           SizedBox(height: 16.h),
-                          // Thanh màu ngăn cách
                           Container(
                             height: 4.h,
                             width: double.infinity,
@@ -71,15 +73,9 @@ class OrderScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 16.h),
                           
-                          // Card giảm giá (h: 56)
                           const DiscountCard(),
-                          
                           SizedBox(height: 24.h),
-                          
-                          // Khung tổng giá (Đã cập nhật giá động)
-                          OrderPaymentSummary(price: totalPrice),
-                          
-                          // Khoảng trống cho phần Bottom Action ở dưới
+                          const OrderPaymentSummary(),
                           SizedBox(height: 180.h),
                         ],
                       ),
@@ -89,12 +85,11 @@ class OrderScreen extends StatelessWidget {
               ),
             ),
             
-            // Khung order ở dưới cùng (phương thức thanh toán + nút Order)
-            Positioned(
+            const Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: OrderBottomAction(totalPrice: totalPrice + 1.0), // Tổng tiền + 1.0 phí ship
+              child: OrderBottomAction(),
             ),
           ],
         ),

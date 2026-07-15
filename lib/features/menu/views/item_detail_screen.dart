@@ -78,6 +78,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     }
 
     final cartItem = CartItemModel(
+      productId: product.id!,
       productSizeId: selectedSize!.id!,
       quantity: 1,
       productName: product.productName,
@@ -103,6 +104,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                   // AppBar với tiêu đề Detail và icon trái tim (Yêu thích)
                   Obx(() => AppBarCoffee(
                     title: "Detail",
+                    showBackButton: true, // Màn chi tiết cần nút back
                     icon: GestureDetector(
                       onTap: () => favoriteService.toggleFavorite(product.id!),
                       child: AppIcon(
@@ -122,7 +124,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           SizedBox(height: 24.h),
                           
                           // Ảnh lớn từ URL của sản phẩm
-                          DetailImage(imageUrl: product.productImageUrl ?? "assets/images/mocha.png"),
+                          DetailImage(imageUrl: product.fullImageUrl),
                           
                           SizedBox(height: 16.h),
                           

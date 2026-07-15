@@ -1,5 +1,7 @@
+import 'package:coffee/features/profile/controllers/profile_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/widgets/app_icon.dart';
 
@@ -8,50 +10,67 @@ class AddressSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 94.h,
-      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 79.h,
-        child: Row(
-          children: [
-            AppIcon("assets/icons/location.svg", size: 48,),
-            SizedBox(width: 12.w),
-            // Address Info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText.small("Deliver to An Nhon", color: Colors.black,),
-                  SizedBox(height: 2.h),
-                  AppText.tiny(
-                    "289 Nguyen Thai Son, Ho Chi Minh",
-                    fontSize: 12.sp,
-                    color: AppColors.border,
-                    fontWeight: FontWeight.normal,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 8.w),
-            // Change button
-            AppText(
-              "Change",
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            ),
-          ],
-        ),
-      )
+    // Tìm ProfileController để lấy dữ liệu địa chỉ thật
+    final profileController = Get.find<ProfileController>();
 
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight.withAlpha(76), // 0.3 * 255 ≈ 76
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AppIcon("assets/icons/location.svg", size: 48.w),
+              SizedBox(width: 12.w),
+              // Address Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(() => AppText.medium(
+                      profileController.displayName.value.isEmpty 
+                          ? "My Location" 
+                          : profileController.displayName.value,
+                      fontSize: 16.sp,
+                    )),
+                    SizedBox(height: 4.h),
+                    Obx(() => AppText.small(
+                      profileController.address.value.isEmpty
+                          ? "Please set your delivery address"
+                          : profileController.address.value,
+                      color: AppColors.border,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8.w),
+              // Change button
+              GestureDetector(
+                onTap: () => profileController.showEditAddressSheet(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(color: AppColors.border.withAlpha(100)),
+                  ),
+                  child: AppText(
+                    "Change",
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -157,4 +157,22 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  /// Đăng nhập bằng Google
+  Future<void> loginWithGoogle() async {
+    try {
+      isLoading.value = true;
+      final response = await repository.signInWithGoogle();
+      
+      if (response != null && response.user != null) {
+        Get.snackbar("Thành công", "Chào mừng ${response.user!.userMetadata?['full_name'] ?? 'bạn'}!");
+        Get.offAllNamed(Routes.DASHBOARD);
+      }
+    } catch (e) {
+      print("--- ERROR loginWithGoogle: $e");
+      Get.snackbar("Lỗi Google Login", e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

@@ -45,9 +45,14 @@ class CartService extends GetxService {
       final List<CartItemModel> remoteItems = (response as List).map((item) {
         final productSize = item['product_size'];
         final product = productSize['product'];
+        
+        // Debug cực mạnh để soi data từ DB
+        print("--- FETCH CART FROM DB: Item: ${product['product_name']}, ProductID: ${product['id']}, SizeID: ${item['product_size_id']}");
+
         return CartItemModel(
-          productSizeId: item['product_size_id'],
-          quantity: item['quantity'],
+          productId: product['id']?.toString(), // Đảm bảo lấy ID của bảng products
+          productSizeId: item['product_size_id']?.toString() ?? "",
+          quantity: item['quantity'] ?? 1,
           productName: product['product_name'],
           productSubname: product['product_subname'],
           imageUrl: product['product_image_url'],
@@ -56,8 +61,11 @@ class CartService extends GetxService {
       }).toList();
 
       cartItems.assignAll(remoteItems);
+      // Sau khi lấy từ server, đồng bộ luôn xuống Local để backup
+      _saveCartToLocal(); 
     } catch (e) {
-      Get.snackbar("Lỗi", "Không thể tải giỏ hàng: ${e.toString()}");
+      print("--- ERROR fetchCartFromSupabase: $e");
+      Get.snackbar("Lỗi", "Không thể tải giỏ hàng");
     }
   }
 
@@ -144,7 +152,11 @@ class CartService extends GetxService {
     }
   }
 
-  void clearCart() {
+  Future<void> clearCart() async {
+    final user = _repository.currentUser;
+    if (user != null) {
+      await _repository.clearCart(user.id);
+    }
     cartItems.clear();
     _storage.remove(_cartKey);
   }

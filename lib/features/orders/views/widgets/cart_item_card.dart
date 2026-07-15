@@ -2,6 +2,7 @@ import 'package:coffee/core/services/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../../core/widgets/custom_image.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/widgets/app_icon.dart';
 
@@ -36,16 +37,11 @@ class CartItemCard extends StatelessWidget {
       child: Row(
         children: [
           // Ảnh sản phẩm dạng tròn
-          Container(
+          CustomImage(
             width: 64.w,
             height: 64.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage(imageUrl),
-                fit: BoxFit.cover,
-              ),
-            ),
+            imageUrl: imageUrl,
+            shape: BoxShape.circle,
           ),
           SizedBox(width: 12.w),
           // Thông tin tên và loại cà phê

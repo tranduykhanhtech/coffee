@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/constants.dart';
+import '../../../core/routes/app_pages.dart';
 import '../../../core/widgets/auth_header.dart';
 import '../../../core/widgets/auth_input.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -95,7 +96,7 @@ class LoginScreen extends StatelessWidget {
                           width: double.infinity,
                           height: 56.h,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () => authController.loginWithGoogle(),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -118,7 +119,17 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: 26.h),
+                        SizedBox(height: 16.h),
+                        // Continue as Guest
+                        TextButton(
+                          onPressed: () => Get.offAllNamed(Routes.DASHBOARD),
+                          child: AppText.small(
+                            "Continue as Guest",
+                            color: AppColors.border,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
                         // Create account
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

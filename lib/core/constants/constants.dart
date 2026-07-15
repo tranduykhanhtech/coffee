@@ -11,6 +11,17 @@ class AppColors {
   static const Color textMain = Color(0xFF313131);     // 03: Xám đậm (Chữ chính, tiêu đề)
   static const Color border = Color(0xFFA2A2A2);       // 04: Xám nhạt (Đường viền, line)
   static const Color background = Color(0xFFF9F2ED);   // 05: Trắng ngà (Nền toàn app)
+  static const Color error = Color(0xFFED5151);        // Màu đỏ lỗi / Promo tag
+}
+
+class AppConstants {
+  AppConstants._();
+
+  // Tên các bucket trên Supabase Storage
+  static const String bucketProducts = 'menu_images';
+  
+  // File name của banner mặc định
+  static const String defaultBannerName = 'banner.png';
 }
 
 class AppSizes {

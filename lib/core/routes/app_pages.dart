@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'auth_middleware.dart';
 import '../../features/auth/views/login_screen.dart';
 import '../../features/auth/views/verify_otp_screen.dart';
 import '../../features/dashboard/views/dashboard.dart';
@@ -7,6 +8,7 @@ import '../../features/menu/views/item_detail_screen.dart';
 import '../../features/menu/views/favorite_screen.dart';
 import '../../features/orders/views/cart_screen.dart';
 import '../../features/orders/views/order_screen.dart';
+import '../../features/orders/views/order_history_screen.dart';
 import '../../features/notifications/views/notification_screen.dart';
 import '../../features/profile/views/payment_method_screen.dart';
 import '../../features/profile/views/profile_screen.dart';
@@ -42,6 +44,12 @@ class AppPages {
     GetPage(
       name: _Paths.ORDER,
       page: () => const OrderScreen(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      name: _Paths.ORDER_HISTORY,
+      page: () => const OrderHistoryScreen(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: _Paths.NOTIFICATION,
@@ -54,10 +62,12 @@ class AppPages {
     GetPage(
       name: _Paths.PAYMENT_METHOD,
       page: () => const PaymentMethodScreen(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: _Paths.PROFILE,
       page: () => const ProfileScreen(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: _Paths.VERIFY_OTP,

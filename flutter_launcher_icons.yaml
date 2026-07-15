@@ -1,0 +1,6 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/cobrew.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/cobrew.png" # Sửa nốt chỗ này thành cobrew.png nha ông!

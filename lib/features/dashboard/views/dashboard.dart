@@ -1,13 +1,14 @@
 import 'package:coffee/core/routes/app_pages.dart';
-import 'package:coffee/features/profile/views/profile_screen.dart'; // Thêm import này
+import 'package:coffee/core/services/auth_service.dart';
+import 'package:coffee/features/profile/views/profile_screen.dart';
 import 'package:get/get.dart';
 import 'package:coffee/features/menu/views/favorite_screen.dart';
 import 'package:coffee/features/menu/views/home_screen.dart';
-import 'package:coffee/features/notifications/views/notification_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../core/constants/constants.dart'; // Import AppColors
+import '../../../core/constants/constants.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../orders/views/order_history_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -18,35 +19,81 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _mapIndexToPage(_selectedIndex));
+
+    // Kiểm tra xem có yêu cầu mở tab cụ thể nào không (ví dụ sau khi đặt hàng thành công)
+    if (Get.arguments != null && Get.arguments is int) {
+      _selectedIndex = Get.arguments;
+      // Nếu có argument, ta cần delay một chút để PageView khởi tạo xong mới nhảy trang được
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _pageController.jumpToPage(_mapIndexToPage(_selectedIndex));
+      });
+    }
+  }
+
+  // Helper để map index của BottomNav sang index của PageView (bỏ qua Cart index 2)
+  int _mapIndexToPage(int index) {
+    if (index < 2) return index;
+    if (index > 2) return index - 1;
+    return 0; // Fallback
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   final List<Widget> _page = [
     const HomeScreen(),
     const FavoriteScreen(),
-    const NotificationScreen(),
-    const ProfileScreen(), // Đã có import nên không còn lỗi
+    const OrderHistoryScreen(),
+    const ProfileScreen(),
   ];
 
   void _changeScreen(int index) {
+    final authService = Get.find<AuthService>();
+
+    // Kiểm tra quyền truy cập cho các tab được bảo vệ
+    // Theo yêu cầu: Favorite (1) và Cart (2 - Route riêng) cho phép Guest (do có Local Store)
+    // Chỉ bảo vệ: History (3) và Profile (4)
+    if (index >= 3 && !authService.isLoggedIn) {
+      Get.toNamed(Routes.LOGIN);
+      return;
+    }
+
     if (index == 2) {
       Get.toNamed(Routes.CART);
       return;
     }
     
+    // Đã loại bỏ việc tự động gọi refresh ở đây để tránh load thừa mỗi khi đổi tab
+    // Dữ liệu sẽ được Controller chủ động yêu cầu load khi cần thiết (ví dụ sau khi đặt hàng)
+
     setState(() {
       _selectedIndex = index;
     });
+
+    // Sử dụng animateToPage để có hiệu ứng chuyển trang mượt mà
+    _pageController.animateToPage(
+      _mapIndexToPage(index),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Logic index cho IndexedStack: index 2 của BottomBar là Cart (không nằm trong stack)
-    int stackIndex = _selectedIndex;
-    if (_selectedIndex > 2) stackIndex = _selectedIndex - 1;
-
     return Scaffold(
-      body: IndexedStack(
-        index: stackIndex, 
-        children: _page
+      body: PageView(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(), // Chặn vuốt tay để dùng Nav Bar điều khiển
+        children: _page,
       ),
       bottomNavigationBar: Container(
         height: 99.h,
@@ -67,28 +114,27 @@ class _DashboardState extends State<Dashboard> {
           onTap: _changeScreen,
           items: [
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/home.svg"),
-              activeIcon: AppIcon("assets/icons/home_active.svg"),
+              icon: const AppIcon("assets/icons/home.svg"),
+              activeIcon: const AppIcon("assets/icons/home_active.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/favorite.svg"),
-              activeIcon: AppIcon("assets/icons/favorite_active.svg"),
+              icon: const AppIcon("assets/icons/favorite.svg"),
+              activeIcon: const AppIcon("assets/icons/favorite_active.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/cart.svg"),
+              icon: const AppIcon("assets/icons/cart.svg"),
               label: "",
             ),
             BottomNavigationBarItem(
-              icon: AppIcon("assets/icons/notification.svg"),
-              activeIcon: AppIcon("assets/icons/notification_active.svg"),
-              label: "",
+              icon: const AppIcon("assets/icons/notification.svg"),
+              activeIcon: const AppIcon("assets/icons/notification_active.svg"),
+              label: "History",
             ),
-            // Sửa lỗi const ở đây
             BottomNavigationBarItem(
-              icon: const Icon(Icons.person_outline, color: AppColors.border),
-              activeIcon: const Icon(Icons.person, color: AppColors.primary),
+              icon: const Icon(Icons.person_outline, color: AppColors.border, size: 48,),
+              activeIcon: const Icon(Icons.person, color: AppColors.primary, size: 48),
               label: "",
             ),
           ],

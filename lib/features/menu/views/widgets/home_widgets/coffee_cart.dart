@@ -1,3 +1,4 @@
+import 'package:coffee/core/widgets/custom_image.dart';
 import 'package:coffee/core/services/cart_service.dart';
 import 'package:coffee/features/orders/models/cart_item_model.dart';
 import 'package:coffee/features/menu/models/product_model.dart';
@@ -29,6 +30,7 @@ class CoffeeCart extends StatelessWidget {
     final defaultSize = product.sizes!.first;
 
     final cartItem = CartItemModel(
+      productId: product.id!, // Bổ sung ID sản phẩm ở đây
       productSizeId: defaultSize.id!,
       quantity: 1,
       productName: product.productName,
@@ -42,71 +44,67 @@ class CoffeeCart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      width: 156.w,
-      padding: EdgeInsets.only(left: 8.w, right: 8.w, top: 8.h, bottom: 12.h),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Bọc phần thông tin sản phẩm bằng GestureDetector để đi tới trang Detail
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(
-                Routes.ITEM_DETAIL,
-                arguments: product,
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Ảnh sản phẩm
-                Container(
-                  width: 140.w,
-                  height: 128.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: AssetImage(product.productImageUrl ?? "assets/images/mocha.png"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                // Tên món và mô tả phụ
-                AppText.medium(
-                  product.productName ?? "",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                AppText.tiny(
-                  product.productSubname ?? "",
-                  color: AppColors.border,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+    return Material( // Thêm Material để hiệu ứng InkWell hiển thị được
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(
+            Routes.ITEM_DETAIL,
+            arguments: product,
+          );
+        },
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
           ),
-          SizedBox(height: 12.h),
-          // Giá và nút thêm (Tách riêng logic click cho nút thêm)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          width: 156.w,
+          padding: EdgeInsets.only(left: 8.w, right: 8.w, top: 8.h, bottom: 12.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText(
-                "\$ ${product.price}",
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+              // Ảnh sản phẩm
+              CustomImage(
+                width: 140.w,
+                height: 128.h,
+                imageUrl: product.fullImageUrl,
+                borderRadius: BorderRadius.circular(12),
               ),
-              // Nút thêm sản phẩm vào giỏ
-              GestureDetector(
-                onTap: _handleAddToCart,
-                child: const AppIcon("assets/icons/add.svg"),
+              SizedBox(height: 8.h),
+              // Tên món và mô tả phụ
+              AppText.medium(
+                product.productName ?? "",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
+              AppText.tiny(
+                product.productSubname ?? "",
+                color: AppColors.border,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 12.h),
+              // Giá và nút thêm (Tách riêng logic click cho nút thêm)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    "\$ ${product.price}",
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  // Nút thêm sản phẩm vào giỏ
+                  GestureDetector(
+                    onTap: _handleAddToCart,
+                    child: const AppIcon("assets/icons/add.svg"),
+                  ),
+                ],
+              )
             ],
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

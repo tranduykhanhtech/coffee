@@ -5,4 +5,8 @@ class ApiKeys {
   static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
 
   static String get supabasePublishableKey => dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? '';
+
+  static String get stripePublishableKey => dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? '';
+
+  static String get stripeSecretKey => dotenv.env['STRIPE_SECRET_KEY'] ?? '';
 }
